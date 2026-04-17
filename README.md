@@ -76,11 +76,17 @@ dt_write=0.01       # snapshot interval
 
 The script creates one directory per phase point, symlinks the corresponding time directories from each cycle, and runs `phaseAveragePostProcess` for each phase.
 
-### For old OF4 cases with WKBC boundaries
+### Custom boundary conditions
 
-```bash
-phaseAveragePostProcess -time '...' -libs '("libWKBCCompat.so")'
-```
+The utility works with any boundary condition type. If the case uses a custom BC provided by a runtime library, load it with `-libs`:
+
+| Case type | Pressure BC | Command |
+|---|---|---|
+| Simple (zeroGradient, fixedValue) | Built-in | `phaseAveragePostProcess -time '...'` |
+| OF12 with modularWKPressure | `modularWKPressure` | `phaseAveragePostProcess -time '...' -libs '("libmodularWKPressure.so")'` |
+| Old OF4 cases with WKBC | `WKBC` | `phaseAveragePostProcess -time '...' -libs '("libWKBCCompat.so")'` |
+
+The `WKBCCompat` library in `src/WKBCCompat/` is only needed for backward compatibility with old OpenFOAM 4 case files that use `type WKBC;` in their pressure boundary. For any new simulation run in OpenFOAM 12, it is not needed.
 
 ## Output
 
